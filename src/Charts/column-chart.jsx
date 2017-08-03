@@ -81,60 +81,57 @@ function setMinAndMaxMonths(acc, expense) {
   return result;
 }
 
+function formatData(data) {
+  // calculate min and max months, have to know this to build everything else
+  const { min, max } = data.reduce(setMinAndMaxMonths, {
+    min: 11,
+    max: 0,
+  });
+
+  // setting up the array with one position per month
+  const accLength = max - min;
+  const acc = new Array(accLength + 1).fill(0);
+
+  // this will have the shape of {'Carro': [xxx,yyy,zzz]}, one array position per month
+  const series = {};
+  Types.map(type => {
+    const typeSum = data.reduce(reduceType(type, min), acc);
+    series[type] = typeSum;
+    return typeSum;
+  });
+
+  // turn the previous object into the highcharts accepted format of:
+  // [{name: 'Carro', data: [xxx,yyy,zzz]}, {...}]
+  const formattedSeries = [];
+  Object.entries(series).forEach(([type, sum]) => {
+    formattedSeries.push({ name: type, data: sum.map(total => total / 100) });
+  });
+
+  // the xAxis labels, highcharts expects an array
+  const categories = [];
+  for (let i = min; i <= max; i += 1) {
+    categories.push(Months[i]);
+  }
+
+  return { ...config, series: formattedSeries, xAxis: { categories } };
+}
+
 class ColumnChart extends React.Component {
   constructor(props) {
     super(props);
-    this.data = props.data;
-    this.minMonth = null;
-    this.maxMonth = null;
+    this.state = { config: formatData(props.data) };
   }
 
   componentWillMount() {
-    // set chart theme
     ReactHighCharts.Highcharts.setOptions(theme);
-    const { min, max } = this.data.reduce(setMinAndMaxMonths, {
-      min: 11,
-      max: 0,
-    });
-    this.minMonth = min;
-    this.maxMonth = max;
-    this.formatData(this.data);
   }
 
-  formatData(data) {
-    // setting up the array with one position per month
-    const accLength = this.maxMonth - this.minMonth;
-    const acc = new Array(accLength + 1).fill(0);
-
-    // this will have the shape of {'Carro': [xxx,yyy,zzz]}, one array position per month
-    const series = {};
-    Types.map(type => {
-      const typeSum = data.reduce(reduceType(type, this.minMonth), acc);
-      series[type] = typeSum;
-      return typeSum;
-    });
-
-    // turn the previous object into the highcharts accepted format of:
-    // [{name: 'Carro', data: [xxx,yyy,zzz]}, {...}]
-    const formattedSeries = [];
-    Object.entries(series).forEach(([type, sum]) => {
-      formattedSeries.push({ name: type, data: sum.map(total => total / 100) });
-    });
-
-    // the xAxis labels, highcharts expects an array
-    const categories = [];
-    for (let i = this.minMonth; i <= this.maxMonth; i += 1) {
-      categories.push(Months[i]);
-    }
-
-    this.config = Object.assign({}, config, {
-      series: formattedSeries,
-      xAxis: { categories },
-    });
+  componentWillReceiveProps(props) {
+    this.setState({ config: formatData(props.data) });
   }
 
   render() {
-    return <ReactHighCharts config={this.config} />;
+    return <ReactHighCharts config={this.state.config} />;
   }
 }
 
