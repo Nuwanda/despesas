@@ -18,7 +18,7 @@ const s = {
   total: 'A31',
 };
 
-class ExpenseBuilder {
+class ExpenseFactory {
   constructor() {
     this.date = null;
     this.type = null;
@@ -47,13 +47,18 @@ class ExpenseBuilder {
 
 function parsePage(sheet) {
   const expenses = [];
-  const expense = new ExpenseBuilder();
+  const expense = new ExpenseFactory();
+
+  // since I wasn't saving a date for each expense they all get the same per page,
+  // the first day of that month, I saved it in the first cell to make it easier to import
   expense.date = sheet[s.date].v;
 
+  // go collumn by collumn, since sheets have a collumn for each type
   for (const type of Types) {
     const col = s[type];
     expense.type = type;
 
+    // then cell by cell for all normal expenses
     for (let row = s.normalStart; row < s.normalEnd; row += 1) {
       const cell = sheet[`${col}${row}`];
       expense.extra = false;
@@ -63,6 +68,7 @@ function parsePage(sheet) {
       }
     }
 
+    // same as before but for cells marked as extra
     for (let row = s.extrasStart; row < s.extrasEnd; row += 1) {
       const cell = sheet[`${col}${row}`];
       expense.extra = true;

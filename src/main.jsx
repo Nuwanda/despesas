@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import DisplayExpenses from './display-expenses';
+import DisplayExpenses from './MainDisplay/wrapper';
 import DBUtil from './DB/db-util';
 
 window.db = DBUtil;

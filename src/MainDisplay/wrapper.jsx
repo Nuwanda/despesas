@@ -1,7 +1,7 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import ColumnChart from './Charts/column-chart';
-import DBUtil from './DB/db-util';
+import FilterControls from './filter-controls';
+import ColumnChart from '../Charts/column-chart';
+import DBUtil from '../DB/db-util';
 
 const spinner = (
   <div className="preloader-wrapper small active">
@@ -40,6 +40,7 @@ class DisplayExpenses extends React.Component {
   render() {
     return (
       <div>
+        <FilterControls />
         {this.state.hasData
           ? <ColumnChart
               data={this.state.data}
@@ -51,10 +52,5 @@ class DisplayExpenses extends React.Component {
     );
   }
 }
-
-DisplayExpenses.propTypes = {
-  minMonth: PropTypes.number.isRequired,
-  maxMonth: PropTypes.number.isRequired,
-};
 
 export default DisplayExpenses;

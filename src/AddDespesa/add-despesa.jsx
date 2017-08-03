@@ -44,7 +44,7 @@ class AddDespesa extends React.Component {
       // Hack validation for the type element because MaterializeCSS is terrible, stop using it
       if (this.state.type === null) {
         evt.preventDefault();
-        console.error('Type is required');
+        console.error('Type was left null');
         return false;
       }
       evt.preventDefault();
