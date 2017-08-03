@@ -67,17 +67,37 @@ function reduceType(type, minMonth) {
   };
 }
 
+function setMinAndMaxMonths(acc, expense) {
+  const expMonth = expense.date.getMonth();
+  const result = { ...acc };
+
+  if (expMonth < acc.min) {
+    result.min = expMonth;
+  }
+  if (expMonth > acc.max) {
+    result.max = expMonth;
+  }
+
+  return result;
+}
+
 class ColumnChart extends React.Component {
   constructor(props) {
     super(props);
     this.data = props.data;
-    this.minMonth = props.minMonth;
-    this.maxMonth = props.maxMonth;
+    this.minMonth = null;
+    this.maxMonth = null;
   }
 
   componentWillMount() {
     // set chart theme
     ReactHighCharts.Highcharts.setOptions(theme);
+    const { min, max } = this.data.reduce(setMinAndMaxMonths, {
+      min: 11,
+      max: 0,
+    });
+    this.minMonth = min;
+    this.maxMonth = max;
     this.formatData(this.data);
   }
 
@@ -119,8 +139,6 @@ class ColumnChart extends React.Component {
 }
 
 ColumnChart.propTypes = {
-  minMonth: PropTypes.number.isRequired,
-  maxMonth: PropTypes.number.isRequired,
   data: PropTypes.arrayOf(PropTypes.instanceOf(Expense)),
 };
 

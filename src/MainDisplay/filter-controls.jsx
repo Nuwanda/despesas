@@ -1,17 +1,36 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Types } from '../DB/schema';
 
-function validateState(state) {
-  const validated = state;
-  return validated;
+function validateDate(start, end) {
+  if (!start || !end || new Date(end) >= new Date(start)) {
+    return { date: { min: start, max: end } };
+  }
+  return { date: { min: '', max: '' } };
+}
+
+function validateMoney(start, end) {
+  if (!start || !end || parseFloat(end) >= parseFloat(start)) {
+    return { money: { min: start, max: end } };
+  }
+  return { money: { min: '', max: '' } };
 }
 
 class FilterControls extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.labels = [];
+    this.moneyLabels = [];
     this.handleChange = this.handleChange.bind(this);
-    this.state = {};
+    this.handleValidate = this.handleValidate.bind(this);
+    this.notifyParent = props.onChange;
+    this.state = {
+      date: { min: '', max: '' },
+      money: { min: '', max: '' },
+      type: '',
+      extra: '',
+      note: '',
+    };
   }
 
   componentDidMount() {
@@ -22,66 +41,52 @@ class FilterControls extends React.Component {
     $('#filter-extra-choice').on('change', this.handleChange);
   }
 
+  componentDidUpdate() {
+    this.notifyParent(this.state);
+  }
+
   componentWillUnmount() {
     $('#filter-type-choice').material_select('destroy');
     $('#filter-extra-choice').material_select('destroy');
   }
 
-  // TODO: validate maxDate > minDate, maxMoney > minMoney
   handleChange(evt) {
+    const value = evt.target.value;
     switch (evt.target.id) {
       case 'filter-start-date':
-        if (evt.target.value) {
-          this.setState(
-            validateState({
-              date: { ...this.state.date, min: new Date(evt.target.value) },
-            }),
-          );
-        } else {
-          this.setState(
-            validateState({
-              date: { ...this.state.date, min: new Date(1984, 3, 3) },
-            }),
-          );
-        }
+        this.setState(prev => validateDate(value, prev.date.max));
         break;
       case 'filter-end-date':
-        if (evt.target.value) {
-          this.setState(
-            validateState({
-              date: { ...this.state.date, max: new Date(evt.target.value) },
-            }),
-          );
-        } else {
-          this.setState(
-            validateState({
-              date: { ...this.state.date, max: new Date(2100, 11, 31) },
-            }),
-          );
-        }
+        this.setState(prev => validateDate(prev.date.min, value));
         break;
       case 'filter-start-money':
-        this.setState(
-          validateState({
-            money: { ...this.state.money, min: evt.target.value },
-          }),
-        );
+        this.setState({ money: { ...this.state.money, min: value } });
         break;
       case 'filter-end-money':
-        this.setState(
-          validateState({
-            money: { ...this.state.money, max: evt.target.value },
-          }),
-        );
+        this.setState({ money: { ...this.state.money, max: value } });
         break;
       case 'filter-type-choice':
-        this.setState(validateState({ type: evt.target.value }));
+        this.setState({ type: value });
         break;
       case 'filter-extra-choice':
-        this.setState(validateState({ extra: evt.target.value }));
+        this.setState({ extra: value });
         break;
       case 'filter-note':
-        this.setState(validateState({ note: evt.target.value }));
+        this.setState({ note: value });
+        break;
+      default:
+        console.error('Input id not recognized: ', evt.target.id);
+    }
+  }
+
+  handleValidate(evt) {
+    const value = evt.target.value;
+    switch (evt.target.id) {
+      case 'filter-start-money':
+        this.setState(prev => validateMoney(value, prev.money.max));
+        break;
+      case 'filter-end-money':
+        this.setState(prev => validateMoney(prev.money.min, value));
         break;
       default:
         console.error('Input id not recognized: ', evt.target.id);
@@ -100,6 +105,7 @@ class FilterControls extends React.Component {
               <input
                 type="date"
                 id="filter-start-date"
+                value={this.state.date.min}
                 onChange={this.handleChange}
               />
               <label
@@ -115,6 +121,7 @@ class FilterControls extends React.Component {
               <input
                 type="date"
                 id="filter-end-date"
+                value={this.state.date.max}
                 onChange={this.handleChange}
               />
               <label
@@ -132,7 +139,10 @@ class FilterControls extends React.Component {
                 id="filter-start-money"
                 min="0"
                 max="9999"
+                placeholder="0"
+                value={this.state.money.min}
                 onChange={this.handleChange}
+                onBlur={this.handleValidate}
               />
               <label htmlFor="filter-start-money">Valor Mínimo</label>
             </div>
@@ -142,7 +152,10 @@ class FilterControls extends React.Component {
                 id="filter-end-money"
                 min="0"
                 max="9999"
+                placeholder="9999"
+                value={this.state.money.max}
                 onChange={this.handleChange}
+                onBlur={this.handleValidate}
               />
               <label htmlFor="filter-end-money">Valor Máximo</label>
             </div>
@@ -184,5 +197,9 @@ class FilterControls extends React.Component {
     );
   }
 }
+
+FilterControls.propTypes = {
+  onChange: PropTypes.func.isRequired,
+};
 
 export default FilterControls;
