@@ -85,6 +85,7 @@ function formatData(data) {
   if (data.length === 0) {
     return { ...config };
   }
+
   // calculate min and max months, have to know this to build everything else
   const { min, max } = data.reduce(setMinAndMaxMonths, {
     min: 11,

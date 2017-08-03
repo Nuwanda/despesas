@@ -104,7 +104,12 @@ const DBUtil = {
 
           let dateCond;
           if (date) {
-            dateCond = item.date >= date.min && item.date <= date.max;
+            // setting hours to 0, because apparently the importing code created some
+            // strange times for the imported expenses
+            const min = date.min.setHours(0, 0, 0, 0);
+            const max = date.max.setHours(0, 0, 0, 0);
+            const itemDate = item.date.setHours(0, 0, 0, 0);
+            dateCond = itemDate >= min && itemDate <= max;
           } else {
             dateCond = true;
           }
