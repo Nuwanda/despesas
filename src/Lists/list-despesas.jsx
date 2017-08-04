@@ -45,19 +45,20 @@ function ListDespesa({ data, handleSave }) {
           <tbody>
             {expenses}
           </tbody>
-          <tfoot>
-            <tr>
-              <td />
-              <td />
-              <td />
-              <td />
-              <td style={styleRight}>
-                <button className="btn btn-raised" onClick={handleSave}>
-                  Guardar
-                </button>
-              </td>
-            </tr>
-          </tfoot>
+          {handleSave &&
+            <tfoot>
+              <tr>
+                <td />
+                <td />
+                <td />
+                <td />
+                <td style={styleRight}>
+                  <button className="btn btn-raised" onClick={handleSave}>
+                    Guardar
+                  </button>
+                </td>
+              </tr>
+            </tfoot>}
         </table>
       </div>
     </div>
