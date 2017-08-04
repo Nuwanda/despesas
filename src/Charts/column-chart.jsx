@@ -68,10 +68,10 @@ function setMinAndMaxMonths(acc, expense) {
   const expMonth = expense.date.getMonth();
   const result = { ...acc };
 
-  if (expMonth < acc.min) {
+  if (expMonth < acc.minMonth) {
     result.minMonth = expMonth;
   }
-  if (expMonth > acc.max) {
+  if (expMonth > acc.maxMonth) {
     result.maxMonth = expMonth;
   }
 
@@ -85,8 +85,8 @@ function formatData(data) {
 
   // calculate min and max months, have to know this to build everything else
   const { minMonth, maxMonth } = data.reduce(setMinAndMaxMonths, {
-    min: 11,
-    max: 0,
+    minMonth: 11,
+    maxMonth: 0,
   });
 
   // setting up the array with one position per month
