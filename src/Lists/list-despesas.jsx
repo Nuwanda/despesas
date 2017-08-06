@@ -28,9 +28,7 @@ function byExtra(e1, e2) {
   if (e1.extra) {
     return 1;
   }
-  if (!e1.extra) {
-    return -1;
-  }
+  return -1;
 }
 
 function byNote(e1, e2) {
@@ -76,25 +74,28 @@ function sortBy(by, data, reverse) {
 class ListDespesa extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { data: props.data.slice(), sortedBy: null, reverse: true };
+    this.state = { data: props.data.slice(), sortedBy: 'date', reverse: true };
     this.sort = this.sort.bind(this);
   }
 
   componentWillReceiveProps({ data }) {
-    this.setState({ data });
+    this.setState(prev => {
+      const sortedData = sortBy(prev.sortedBy, data, prev.reverse);
+      return { data: sortedData };
+    });
   }
 
-  sort(by) {
+  sort(sortedBy) {
     return () => {
       this.setState(prev => {
         let reverse = prev.reverse;
-        if (prev.sortedBy === by) {
+        if (prev.sortedBy === sortedBy) {
           reverse = !reverse;
         } else {
           reverse = false;
         }
-        const data = sortBy(by, prev.data, reverse);
-        return { data, reverse, sortedBy: by };
+        const data = sortBy(sortedBy, prev.data, reverse);
+        return { data, reverse, sortedBy };
       });
     };
   }
@@ -104,6 +105,8 @@ class ListDespesa extends React.Component {
       <SimpleList
         sortBy={this.sort}
         data={this.state.data}
+        sortColumn={this.state.sortedBy}
+        sortReverse={this.state.reverse}
         handleSave={this.props.handleSave}
       />
     );
@@ -113,6 +116,10 @@ class ListDespesa extends React.Component {
 ListDespesa.propTypes = {
   data: PropTypes.arrayOf(PropTypes.instanceOf(Expense)).isRequired,
   handleSave: PropTypes.func,
+};
+
+ListDespesa.defaultProps = {
+  handleSave: null,
 };
 
 export default ListDespesa;

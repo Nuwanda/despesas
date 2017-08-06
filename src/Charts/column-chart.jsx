@@ -111,7 +111,12 @@ function formatData(data) {
   // Calculate total expenses for chart title
   const totalSum = formattedSeries.reduce(
     (total, item) =>
-      total + item.data.reduce((partial, sum) => sum * 100 + partial, 0),
+      total +
+      item.data.reduce((partial, sum) => {
+        // fixing js terrible math again
+        const fix = sum * 100;
+        return fix + partial;
+      }, 0),
     0,
   );
 
@@ -149,7 +154,7 @@ class ColumnChart extends React.Component {
 }
 
 ColumnChart.propTypes = {
-  data: PropTypes.arrayOf(PropTypes.instanceOf(Expense)),
+  data: PropTypes.arrayOf(PropTypes.instanceOf(Expense)).isRequired,
 };
 
 export default ColumnChart;

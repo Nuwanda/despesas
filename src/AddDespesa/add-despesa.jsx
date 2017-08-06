@@ -94,7 +94,6 @@ class AddDespesa extends React.Component {
                 max="99999"
                 step="0.01"
                 id="money"
-                autoFocus="autoFocus"
                 ref={c => {
                   this.moneyInput = c;
                 }}

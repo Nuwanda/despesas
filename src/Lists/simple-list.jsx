@@ -2,14 +2,55 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Expense } from '../DB/schema';
 
-function SimpleList(props) {
-  const styleCentered = { textAlign: 'center' };
-  const styleRight = { textAlign: 'right' };
+const upSpan = <span>⏶</span>;
+const downSpan = <span>⏷</span>;
 
-  const expenses = props.data.map((item, index) => {
+const headers = [
+  { text: 'Valor', id: 'money' },
+  { text: 'Categoria', id: 'type' },
+  { text: 'Data', id: 'date' },
+  { text: 'Extra?', id: 'extra' },
+  { text: 'Descrição', id: 'note' },
+];
+
+const styleCentered = { textAlign: 'center' };
+const styleRight = { textAlign: 'right' };
+
+function sortHelper(id, sortColumn, sortReverse) {
+  if (sortColumn === id) {
+    if (sortReverse) {
+      return upSpan;
+    }
+    return downSpan;
+  }
+  return <span />;
+}
+
+const headerCell = function buildHeader(sortBy, sortColumn, sortReverse) {
+  return entry => {
+    const { id, text } = entry;
+    return (
+      <th key={id} style={styleCentered}>
+        <span
+          tabIndex={0}
+          role="button"
+          style={{ cursor: 'pointer' }}
+          onClick={sortBy(id)}
+        >
+          {text}
+          {sortHelper(id, sortColumn, sortReverse)}
+        </span>
+      </th>
+    );
+  };
+};
+
+// TODO: send in props with the sort type to display in the header
+function SimpleList(props) {
+  const expenses = props.data.map(item => {
     const price = `€${item.money}`;
     return (
-      <tr className="collection-item" key={index}>
+      <tr className="collection-item" key={item.id}>
         <td style={styleRight}>
           {price}
         </td>
@@ -35,51 +76,9 @@ function SimpleList(props) {
         <table className="collection">
           <thead>
             <tr>
-              <th style={styleCentered}>
-                <span
-                  role="button"
-                  style={{ cursor: 'pointer' }}
-                  onClick={props.sortBy('money')}
-                >
-                  Valor
-                </span>
-              </th>
-              <th style={styleCentered}>
-                <span
-                  role="button"
-                  style={{ cursor: 'pointer' }}
-                  onClick={props.sortBy('type')}
-                >
-                  Categoria
-                </span>
-              </th>
-              <th style={styleCentered}>
-                <span
-                  role="button"
-                  style={{ cursor: 'pointer' }}
-                  onClick={props.sortBy('date')}
-                >
-                  Data
-                </span>
-              </th>
-              <th style={styleCentered}>
-                <span
-                  role="button"
-                  style={{ cursor: 'pointer' }}
-                  onClick={props.sortBy('extra')}
-                >
-                  Extra?
-                </span>
-              </th>
-              <th style={styleCentered}>
-                <span
-                  role="button"
-                  style={{ cursor: 'pointer' }}
-                  onClick={props.sortBy('note')}
-                >
-                  Descrição
-                </span>
-              </th>
+              {headers.map(
+                headerCell(props.sortBy, props.sortColumn, props.sortReverse),
+              )}
             </tr>
           </thead>
           <tbody>
@@ -108,7 +107,13 @@ function SimpleList(props) {
 SimpleList.propTypes = {
   data: PropTypes.arrayOf(PropTypes.instanceOf(Expense)).isRequired,
   sortBy: PropTypes.func.isRequired,
+  sortColumn: PropTypes.string,
+  sortReverse: PropTypes.bool,
   handleSave: PropTypes.func,
+};
+
+SimpleList.defaultProps = {
+  handleSave: null,
 };
 
 export default SimpleList;
