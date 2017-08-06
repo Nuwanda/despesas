@@ -45,7 +45,6 @@ const headerCell = function buildHeader(sortBy, sortColumn, sortReverse) {
   };
 };
 
-// TODO: send in props with the sort type to display in the header
 function SimpleList(props) {
   const expenses = props.data.map(item => {
     const price = `€${item.money}`;
