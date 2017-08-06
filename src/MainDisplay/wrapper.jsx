@@ -1,23 +1,8 @@
 import React from 'react';
 import FilterControls from './filter-controls';
 import ColumnChart from '../Charts/column-chart';
+import ListDespesa from '../Lists/list-despesas';
 import DBUtil from '../DB/db-util';
-
-const spinner = (
-  <div className="preloader-wrapper small active">
-    <div className="spinner-layer spinner-green-only">
-      <div className="circle-clipper left">
-        <div className="circle" />
-      </div>
-      <div className="gap-patch">
-        <div className="circle" />
-      </div>
-      <div className="circle-clipper right">
-        <div className="circle" />
-      </div>
-    </div>
-  </div>
-);
 
 function buildDateQuery({ min, max }) {
   if (min && max) {
@@ -27,10 +12,10 @@ function buildDateQuery({ min, max }) {
     };
   }
   if (min && !max) {
-    return { min: new Date(min), max: new Date(8640000000000000) };
+    return { min: new Date(min), max: new Date(864000000000000) };
   }
   if (!min && max) {
-    return { min: new Date(-8640000000000000), max: new Date(max) };
+    return { min: new Date(-864000000000000), max: new Date(max) };
   }
   return null;
 }
@@ -43,7 +28,7 @@ function buildMoneyQuery({ min, max }) {
     };
   }
   if (min && !max) {
-    return { min: parseFloat(min), max: 9999 };
+    return { min: parseFloat(min), max: 99999 };
   }
   if (!min && max) {
     return { min: 0, max: parseFloat(max) };
@@ -67,7 +52,6 @@ function buildQueryOptions(filters) {
   options.date = buildDateQuery(filters.date);
   options.money = buildMoneyQuery(filters.money);
   options.extra = buildExtraQuery(filters.extra);
-  console.log(options);
   return options;
 }
 
@@ -98,7 +82,15 @@ class DisplayExpenses extends React.Component {
     return (
       <div>
         <FilterControls onChange={this.gotFilter} />
-        {this.state.hasData ? <ColumnChart data={this.state.data} /> : spinner}
+        {this.state.hasData &&
+          <div className="row">
+            <div className="col l6">
+              <ListDespesa data={this.state.data} />
+            </div>
+            <div className="col l6">
+              <ColumnChart data={this.state.data} />
+            </div>
+          </div>}
       </div>
     );
   }

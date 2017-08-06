@@ -26,9 +26,6 @@ const config = {
   exporting: {
     enabled: false,
   },
-  title: {
-    text: 'Despesas Mensais',
-  },
   yAxis: {
     min: 0,
     title: {
@@ -71,31 +68,35 @@ function setMinAndMaxMonths(acc, expense) {
   const expMonth = expense.date.getMonth();
   const result = { ...acc };
 
-  if (expMonth < acc.min) {
-    result.min = expMonth;
+  if (expMonth < acc.minMonth) {
+    result.minMonth = expMonth;
   }
-  if (expMonth > acc.max) {
-    result.max = expMonth;
+  if (expMonth > acc.maxMonth) {
+    result.maxMonth = expMonth;
   }
 
   return result;
 }
 
 function formatData(data) {
+  if (data.length === 0) {
+    return { ...config };
+  }
+
   // calculate min and max months, have to know this to build everything else
-  const { min, max } = data.reduce(setMinAndMaxMonths, {
-    min: 11,
-    max: 0,
+  const { minMonth, maxMonth } = data.reduce(setMinAndMaxMonths, {
+    minMonth: 11,
+    maxMonth: 0,
   });
 
   // setting up the array with one position per month
-  const accLength = max - min;
+  const accLength = maxMonth - minMonth;
   const acc = new Array(accLength + 1).fill(0);
 
   // this will have the shape of {'Carro': [xxx,yyy,zzz]}, one array position per month
   const series = {};
   Types.map(type => {
-    const typeSum = data.reduce(reduceType(type, min), acc);
+    const typeSum = data.reduce(reduceType(type, minMonth), acc);
     series[type] = typeSum;
     return typeSum;
   });
@@ -107,13 +108,30 @@ function formatData(data) {
     formattedSeries.push({ name: type, data: sum.map(total => total / 100) });
   });
 
+  // Calculate total expenses for chart title
+  const totalSum = formattedSeries.reduce(
+    (total, item) =>
+      total +
+      item.data.reduce((partial, sum) => {
+        // fixing js terrible math again
+        const fix = sum * 100;
+        return fix + partial;
+      }, 0),
+    0,
+  );
+
   // the xAxis labels, highcharts expects an array
   const categories = [];
-  for (let i = min; i <= max; i += 1) {
+  for (let i = minMonth; i <= maxMonth; i += 1) {
     categories.push(Months[i]);
   }
 
-  return { ...config, series: formattedSeries, xAxis: { categories } };
+  return {
+    ...config,
+    series: formattedSeries,
+    xAxis: { categories },
+    title: { text: `Total despesas: €${totalSum / 100}` },
+  };
 }
 
 class ColumnChart extends React.Component {
@@ -136,7 +154,7 @@ class ColumnChart extends React.Component {
 }
 
 ColumnChart.propTypes = {
-  data: PropTypes.arrayOf(PropTypes.instanceOf(Expense)),
+  data: PropTypes.arrayOf(PropTypes.instanceOf(Expense)).isRequired,
 };
 
 export default ColumnChart;

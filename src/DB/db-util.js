@@ -1,5 +1,15 @@
 import { Expense } from './schema';
 
+/* eslint-disable */
+function uuidv4() {
+  return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
+    (c ^
+      (crypto.getRandomValues(new Uint8Array(1))[0] &
+        (15 >> (c / 4)))).toString(16),
+  );
+}
+/* eslint-enable */
+
 const DBUtil = {
   open() {
     return indexedDB.open('expensesDB', 3);
@@ -66,6 +76,7 @@ const DBUtil = {
           const cursor = cursorEvt.target.result;
           if (cursor) {
             const expense = new Expense(cursor.value);
+            expense.id = uuidv4();
             values.push(expense);
             cursor.continue();
           }
@@ -104,7 +115,12 @@ const DBUtil = {
 
           let dateCond;
           if (date) {
-            dateCond = item.date >= date.min && item.date <= date.max;
+            // setting hours to 0, because apparently the importing code created some
+            // strange times for the imported expenses
+            const min = date.min.setHours(0, 0, 0, 0);
+            const max = date.max.setHours(0, 0, 0, 0);
+            const itemDate = item.date.setHours(0, 0, 0, 0);
+            dateCond = itemDate >= min && itemDate <= max;
           } else {
             dateCond = true;
           }

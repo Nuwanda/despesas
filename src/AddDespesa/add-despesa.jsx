@@ -91,10 +91,9 @@ class AddDespesa extends React.Component {
                 className="form-control"
                 type="number"
                 min="0"
-                max="9999"
+                max="99999"
                 step="0.01"
                 id="money"
-                autoFocus="autoFocus"
                 ref={c => {
                   this.moneyInput = c;
                 }}

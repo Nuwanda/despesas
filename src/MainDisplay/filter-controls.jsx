@@ -138,7 +138,7 @@ class FilterControls extends React.Component {
                 type="number"
                 id="filter-start-money"
                 min="0"
-                max="9999"
+                max="99999"
                 placeholder="0"
                 value={this.state.money.min}
                 onChange={this.handleChange}
@@ -151,8 +151,8 @@ class FilterControls extends React.Component {
                 type="number"
                 id="filter-end-money"
                 min="0"
-                max="9999"
-                placeholder="9999"
+                max="99999"
+                placeholder="99999"
                 value={this.state.money.max}
                 onChange={this.handleChange}
                 onBlur={this.handleValidate}
