@@ -111,7 +111,7 @@ function formatData(data) {
   // Calculate total expenses for chart title
   const totalSum = formattedSeries.reduce(
     (total, item) =>
-      total + item.data.reduce((partial, sum) => sum + partial, 0),
+      total + item.data.reduce((partial, sum) => sum * 100 + partial, 0),
     0,
   );
 
@@ -125,7 +125,7 @@ function formatData(data) {
     ...config,
     series: formattedSeries,
     xAxis: { categories },
-    title: { text: `Total despesas: €${totalSum}` },
+    title: { text: `Total despesas: €${totalSum / 100}` },
   };
 }
 
