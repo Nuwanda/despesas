@@ -144,7 +144,14 @@ class FilterControls extends React.Component {
                 onChange={this.handleChange}
                 onBlur={this.handleValidate}
               />
-              <label htmlFor="filter-start-money">Valor Mínimo</label>
+              <label
+                ref={c => {
+                  this.labels.push(c);
+                }}
+                htmlFor="filter-start-money"
+              >
+                Valor Mínimo
+              </label>
             </div>
             <div className="input-field col l3">
               <input
@@ -157,7 +164,14 @@ class FilterControls extends React.Component {
                 onChange={this.handleChange}
                 onBlur={this.handleValidate}
               />
-              <label htmlFor="filter-end-money">Valor Máximo</label>
+              <label
+                ref={c => {
+                  this.labels.push(c);
+                }}
+                htmlFor="filter-end-money"
+              >
+                Valor Máximo
+              </label>
             </div>
           </div>
           <div className="row">
