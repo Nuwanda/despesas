@@ -1,3 +1,17 @@
-.root {
-  padding-top: 60px;
+body {
+  background-color: DarkSlateGray
+}
+
+.row {
+  background-color: #f7faff;
+  border-radius: 3px;
+  padding: 0px 10px 0px 10px;
+}
+
+table {
+  border-radius: 2px;
+}
+
+thead {
+  background-color: #effeff;
 }
