@@ -151,7 +151,7 @@ const DBUtil = {
   },
 
   download() {
-    this.getAll().then(data => {
+    DBUtil.getAll().then(data => {
       const json = JSON.stringify(data);
       const uri = encodeURIComponent(json);
       const node = document.createElement('a');
