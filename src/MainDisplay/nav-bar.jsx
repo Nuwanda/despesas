@@ -11,11 +11,11 @@ function NavBar() {
       <nav>
         <div className="nav-wrapper teal darken-1">
           <Link to="/" className="brand-logo">
-            <i style={style} className="material-icons">
+            <i className="material-icons" style={style}>
               attach_money
             </i>Despesas
           </Link>
-          <ul className="right hide-on-med-and-down">
+          <ul className="right">
             <li>
               <Link to="/">
                 <i style={style} className="large material-icons">

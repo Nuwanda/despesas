@@ -16,6 +16,7 @@ function validateMoney(start, end) {
   return { money: { min: '', max: '' } };
 }
 
+// TODO: date validation should also be done on blur
 class FilterControls extends React.Component {
   constructor(props) {
     super(props);

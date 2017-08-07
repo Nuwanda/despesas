@@ -14,7 +14,7 @@ function ImportWrapper() {
       </div>
       <div className="col l12">
         <button className="btn btn-raised" onClick={DBUtil.download}>
-          Export Database
+          Exportar Database
         </button>
       </div>
     </div>
