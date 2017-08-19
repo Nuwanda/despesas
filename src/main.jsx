@@ -6,6 +6,9 @@ import DisplayExpenses from './MainDisplay/display-expenses';
 import AddDespesa from './AddDespesa/add-despesa';
 import ImportWrapper from './Import/import-wrapper';
 import NavBar from './MainDisplay/nav-bar';
+import DBUtil from './DB/db-util';
+
+window.db = DBUtil;
 
 function Root(props) {
   return (

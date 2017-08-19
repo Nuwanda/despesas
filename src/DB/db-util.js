@@ -12,31 +12,19 @@ function uuidv4() {
 
 const DBUtil = {
   open() {
-    return indexedDB.open('expensesDB', 3);
-  },
+    const request = indexedDB.open('expensesDB', 8);
 
-  create() {
-    const result = new Promise((resolve, reject) => {
-      const request = DBUtil.open();
+    request.onupgradeneeded = function migrate(evt) {
+      const db = evt.target.result;
+      const expenseStore = db.createObjectStore('expenses', {
+        autoIncrement: true,
+      });
 
-      request.onerror = evt => {
-        reject(`DB error: ${evt.target.errorCode}`);
-      };
+      expenseStore.createIndex('type', 'type', { unique: false });
+      expenseStore.createIndex('date', 'date', { unique: false });
+    };
 
-      request.onupgradeneeded = function migrate(evt) {
-        const db = evt.target.result;
-        const expenseStore = db.createObjectStore('expenses', {
-          autoIncrement: true,
-        });
-
-        expenseStore.createIndex('type', 'type', { unique: false });
-        expenseStore.createIndex('date', 'date', { unique: false });
-      };
-
-      request.onsuccess = () => resolve(request.result);
-    });
-
-    return result;
+    return request;
   },
 
   populate(data) {

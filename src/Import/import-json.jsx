@@ -19,12 +19,6 @@ class ImportSheet extends React.Component {
         Object.assign({}, item, { money: parseFloat(item.money) }),
       );
 
-      // In case the db is already created this does nothing
-      const createRes = DBUtil.create();
-      createRes
-        .then(db => console.log('DB openened: ', db))
-        .catch(err => console.warn(err));
-
       const populateRes = DBUtil.populate(parsed);
       populateRes
         .then(console.log('Populate DB was successful'))

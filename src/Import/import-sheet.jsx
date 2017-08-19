@@ -20,12 +20,6 @@ class ImportSheet extends React.Component {
       const workbook = XLSX.read(data, { type: 'binary' });
       const expenses = parseSheet(workbook);
 
-      // In case the db is already created this does nothing
-      const createRes = DBUtil.create();
-      createRes
-        .then(db => console.log('DB openened: ', db))
-        .catch(err => console.warn(err));
-
       // Populate the db with the results from the sheet,
       // since spreadsheets don't have primary keys we can't really tell if
       // we're importing duplicate expenses, it's up to the user
