@@ -65,6 +65,17 @@ function SimpleList(props) {
         <td style={styleCentered}>
           {item.note}
         </td>
+        {props.handleDelete &&
+          <td>
+            <span
+              tabIndex={0}
+              role="button"
+              style={{ cursor: 'pointer' }}
+              onClick={props.handleDelete(item.id)}
+            >
+              <i className="material-icons">delete</i>
+            </span>
+          </td>}
       </tr>
     );
   });
@@ -78,6 +89,7 @@ function SimpleList(props) {
               {headers.map(
                 headerCell(props.sortBy, props.sortColumn, props.sortReverse),
               )}
+              {props.handleDelete && <th />}
             </tr>
           </thead>
           <tbody>
@@ -109,10 +121,12 @@ SimpleList.propTypes = {
   sortColumn: PropTypes.string,
   sortReverse: PropTypes.bool,
   handleSave: PropTypes.func,
+  handleDelete: PropTypes.func,
 };
 
 SimpleList.defaultProps = {
   handleSave: null,
+  handleDelete: null,
 };
 
 export default SimpleList;

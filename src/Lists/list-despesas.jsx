@@ -103,6 +103,7 @@ class ListDespesa extends React.Component {
   render() {
     return (
       <SimpleList
+        handleDelete={this.props.handleDelete}
         sortBy={this.sort}
         data={this.state.data}
         sortColumn={this.state.sortedBy}
@@ -116,10 +117,12 @@ class ListDespesa extends React.Component {
 ListDespesa.propTypes = {
   data: PropTypes.arrayOf(PropTypes.instanceOf(Expense)).isRequired,
   handleSave: PropTypes.func,
+  handleDelete: PropTypes.func,
 };
 
 ListDespesa.defaultProps = {
   handleSave: null,
+  handleDelete: null,
 };
 
 export default ListDespesa;

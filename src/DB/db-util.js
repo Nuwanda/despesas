@@ -1,15 +1,5 @@
 import { Expense } from './schema';
 
-/* eslint-disable */
-function uuidv4() {
-  return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
-    (c ^
-      (crypto.getRandomValues(new Uint8Array(1))[0] &
-        (15 >> (c / 4)))).toString(16),
-  );
-}
-/* eslint-enable */
-
 const DBUtil = {
   open() {
     const request = indexedDB.open('expensesDB', 8);
@@ -64,7 +54,6 @@ const DBUtil = {
           const cursor = cursorEvt.target.result;
           if (cursor) {
             const expense = new Expense(cursor.value);
-            expense.id = uuidv4();
             values.push(expense);
             cursor.continue();
           }

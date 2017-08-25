@@ -14,6 +14,7 @@ class AddDespesa extends React.Component {
     this.checkboxChanged = this.checkboxChanged.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleSave = this.handleSave.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
 
     this.state = {
       money: '',
@@ -73,6 +74,15 @@ class AddDespesa extends React.Component {
       console.log('Items added');
       this.setState({ expenses: [] });
     });
+  }
+
+  handleDelete(id) {
+    return () => {
+      this.setState(prev => {
+        const expenses = prev.expenses.filter(item => item.id !== id);
+        return { expenses };
+      });
+    };
   }
 
   render() {
@@ -175,6 +185,7 @@ class AddDespesa extends React.Component {
             ? <ListDespesa
                 data={this.state.expenses}
                 handleSave={this.handleSave}
+                handleDelete={this.handleDelete}
               />
             : <h4>Sem despesas para guardar...</h4>}
         </div>
