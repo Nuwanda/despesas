@@ -6,6 +6,7 @@ const TypeEnum = {
   CINEMA: 'Cinema',
   COMIDA: 'Comida',
   PHONE: 'Phone',
+  CASA: 'Casa',
   MISC: 'Misc',
 };
 
